@@ -60,6 +60,11 @@ def add(request):
         response['msg'] = 'no login'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
+    # 只允许POST操作
+    if request.method != 'POST':
+        response['msg'] = 'wrong method'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
+
     # 已经登录, 所以拿取用户信息
     t_username = request.session['login_id']
 
@@ -95,6 +100,11 @@ def delete(request):
     # 要在登录状态下
     if 'login_id' not in request.session:
         response['msg'] = 'no login'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+    # 只允许POST操作
+    if request.method != 'POST':
+        response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
     # 已经登录, 所以拿取用户信息
