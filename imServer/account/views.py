@@ -128,10 +128,17 @@ def info(request):
             return HttpResponse(json.dumps(response), content_type = 'application/json')
         else:
             if t_user.count() == 1:
-                temp = model_to_dict(t_user[0])
-                response = {'state':'ok', 'msg':'ok', "data":temp}
+                t_user = t_user[0]
+                t_user.Phone = t_phone
+                t_user.Email = t_email
+                t_user.Nickname = t_nickname
+                t_user.Avator = t_avator
+                t_user.Desrciption = t_description
+                t_user.save()
+                response['state'] = 'ok'
+                response['msg'] = 'change successfully'
             else:
-                response['msg'] = 'no data'
+                response['msg'] = 'no such user'
 
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
@@ -148,17 +155,10 @@ def info(request):
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
         if t_user.count() == 1:
-            t_user = t_user[0]
-            t_user.Phone = t_phone
-            t_user.Email = t_email
-            t_user.Nickname = t_nickname
-            t_user.Avator = t_avator
-            t_user.Desrciption = t_description
-            t_user.save()
-            response['state'] = 'ok'
-            response['msg'] = 'change successfully'
+            temp = model_to_dict(t_user[0])
+            response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
-            response['msg'] = 'no such user'
+            response['msg'] = 'no data'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
