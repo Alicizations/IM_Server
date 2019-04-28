@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'message.apps.MessageConfig',
+    'contact.apps.ContactConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

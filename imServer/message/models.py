@@ -8,3 +8,6 @@ class Msg(models.Model):
     From = models.CharField(max_length = 20)
     Type = models.CharField(max_length = 10)
     ContentID = models.IntegerField(default = 0)
+
+    def __str__(self):
+        return self.Username
