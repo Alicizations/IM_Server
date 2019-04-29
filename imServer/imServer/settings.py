@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'message.apps.MessageConfig',
     'contact.apps.ContactConfig',
+    'content.apps.ContentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
