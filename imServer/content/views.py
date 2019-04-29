@@ -9,50 +9,46 @@ from .models import Content_Image
 
 
 # Create your views here.
+# 上传一个string，只允许post方法
 def text(request):
-    response = {'state':'fail', 'msg':'no msg', 'data':[]}
+    response = {'state':'fail', 'msg':'no msg'}
 
     # 要在登录状态下
     if 'login_id' not in request.session:
         response['msg'] = 'no login'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 已经登录, 所以拿取用户信息
-    t_username = request.session['login_id']
-
-    # 只允许GET方法获得好友列表
-    if request.method != 'GET':
+    # 只允许POST方法
+    if request.method != 'POST':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
-
-    # 这里进入GET方法
-    # 数据库操作
+    
+    # 获取参数
     try:
-        t_contact = Contact.objects.filter(Username = t_username)
+        t_data = request.POST['data']
+        t_username = request.POST['to']
+    except Exception as e:
+        response['msg'] = 'POST parameter error'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
 
+    # 此处未创建message表格，暂未实现插入到message
+
+
+    # 为消息设定一个id，这里使用的是消息表的长度+1
+    cid = len(Content_Text.objects.all()) + 1
+
+    # 数据库操作,插入消息
+    try:
+        Content_Text.objects.create(
+            Cid = cid,
+            Cstr = t_data
+        )
+        response['state'] = 'ok'
+        response['msg'] = 'send successfully'
     except Exception as e:
         response['msg'] = 'db error'
-        return HttpResponse(json.dumps(response), content_type = 'application/json')
-    else:
-        if t_contact.count() == 1:
-            t_contact = t_contact[0]
-            t_friends = t_contact.Friends
-            # 处理字符串,获取好友
-            friends = t_friends.spilt()
-            for friend_ID in friends_str:
-                try:
-                    t_user = User.objects.filter(UserID = friend_ID)
-                except Exception as e:
-                    response['msg'] = 'db error'
-                    return HttpResponse(json.dumps(response), content_type = 'application/json')
-                response['data'].append(t_user)
-            response['state'] = 'ok'
-            response['msg'] = 'get successfully'
-        else:
-            response['msg'] = 'no such user'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
-
 
 def image(request):
     response = {'state':'fail', 'msg':'no msg'}
@@ -62,35 +58,37 @@ def image(request):
         response['msg'] = 'no login'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 只允许POST操作
+    # 只允许POST方法
     if request.method != 'POST':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
-
-    # 已经登录, 所以拿取用户信息
-    t_username = request.session['login_id']
-
+    
     # 获取参数
     try:
-        r_username = request.POST['username']
+        t_data = request.POST['data']
+        t_username = request.POST['to']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 数据库操作
+    # 此处未创建message表格，暂未实现插入到message
+    
+
+    # 为消息设定一个id，这里使用的是消息表的长度+1
+    cid = len(Content_Image.objects.all()) + 1
+
+    # 图片如何转换到存储格式，暂未实现
+
+    # 数据库操作,插入图片
     try:
-        t_user = User.objects.filter(Username = r_username)
-        t_contact = Contact.objects.filter(Username = t_username)
+        Content_Image.objects.create(
+            Cid = cid,
+            Cimage = t_data
+        )
+        response['state'] = 'ok'
+        response['msg'] = 'send successfully'
     except Exception as e:
         response['msg'] = 'db error'
-        return HttpResponse(json.dumps(response), content_type = 'application/json')
-    else:
-        if t_user.count() <= 0:
-            response['msg'] = 'user does not exist'
-        else:
-            t_contact.Friends = str(t_contact.Friends) + ',' + t_user.UserID
-            response['state'] = 'ok'
-            response['msg'] = 'add friends successfully'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
@@ -104,40 +102,23 @@ def text_detail(request, text_id):
         response['msg'] = 'no login'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 只允许POST操作
-    if request.method != 'POST':
+    # 只允许GET方法
+    if request.method != 'GET':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
-
-    # 已经登录, 所以拿取用户信息
-    t_username = request.session['login_id']
-
-    # 获取参数
+    
+    # 数据库操作,查询消息
     try:
-        r_username = request.POST['username']
-    except Exception as e:
-        response['msg'] = 'POST parameter error'
-        return HttpResponse(json.dumps(response), content_type = 'application/json')
-
-    # 数据库操作
-    try:
-        t_user = User.objects.filter(Username = r_username)
-        t_contact = Contact.objects.filter(Username = t_username)
+        t_text = Content_Text.objects.filter(Cid = text_id)
     except Exception as e:
         response['msg'] = 'db error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
-        # 解析contact里面的字符串
-        friends_strs = t_contact.Friends.split()
-        # 未添加该好友
-        if str(t_user.UserID) not in friends_strs:
-            response['msg'] = 'user does not exist'
+        if t_text.count() == 1:
+            temp = model_to_dict(t_text[0])
+            response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
-            friends_strs.remove(str(t_user.UserID))
-            friends = ','.join(friends_strs)
-            t_contact.Friends = friends
-            response['state'] = 'ok'
-            response['msg'] = 'delete friends successfully'
+            response['msg'] = 'no data'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
@@ -150,39 +131,25 @@ def image_detail(request, image_id):
         response['msg'] = 'no login'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 只允许POST操作
-    if request.method != 'POST':
+    # 只允许GET方法
+    if request.method != 'GET':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
-
-    # 已经登录, 所以拿取用户信息
-    t_username = request.session['login_id']
-
-    # 获取参数
+    
+    # 数据库操作,查询消息
     try:
-        r_username = request.POST['username']
-    except Exception as e:
-        response['msg'] = 'POST parameter error'
-        return HttpResponse(json.dumps(response), content_type = 'application/json')
-
-    # 数据库操作
-    try:
-        t_user = User.objects.filter(Username = r_username)
-        t_contact = Contact.objects.filter(Username = t_username)
+        t_image = Content_Image.objects.filter(Cid = image_id)
+        # 此处是否需要实现，存储格式转换成图片再返回，待实现
+        
+        
     except Exception as e:
         response['msg'] = 'db error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
-        # 解析contact里面的字符串
-        friends_strs = t_contact.Friends.split()
-        # 未添加该好友
-        if str(t_user.UserID) not in friends_strs:
-            response['msg'] = 'user does not exist'
+        if t_image.count() == 1:
+            temp = model_to_dict(t_image[0])
+            response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
-            friends_strs.remove(str(t_user.UserID))
-            friends = ','.join(friends_strs)
-            t_contact.Friends = friends
-            response['state'] = 'ok'
-            response['msg'] = 'delete friends successfully'
+            response['msg'] = 'no data'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
