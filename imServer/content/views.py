@@ -4,6 +4,7 @@ from django.http import HttpResponse
 import json
 from account.models import User
 from contact.models import Contact
+from message.models import Msg
 from .models import Content_Text
 from .models import Content_Image
 
@@ -23,25 +24,47 @@ def text(request):
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     
+    # 已经登录, 所以拿取用户信息
+    from_username = request.session['login_id']
+
     # 获取参数
     try:
         t_data = request.POST['data']
-        t_username = request.POST['to']
+        to_username = request.POST['to']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 此处未创建message表格，暂未实现插入到message
-
-
     # 为消息设定一个id，这里使用的是消息表的长度+1
     cid = len(Content_Text.objects.all()) + 1
 
-    # 数据库操作,插入消息
+    seq = 1
+    # 处理seq，在Msg根据接收方用户名找到上一个seq，若不存在则初始化为1
+    try:
+        t_msg = Msg.objects.filter(Username = to_username)
+
+    except Exception as e:
+        response['msg'] = 'db error'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
+    else:
+        # 找到该用户最大的seq
+        if t_msg.count() > 0:
+            for msg in t_msg:
+                seq = max(seq, msg.Seq)
+            seq += 1
+
+    # 数据库操作,插入消息,并插入到message
     try:
         Content_Text.objects.create(
             Cid = cid,
             Cstr = t_data
+        )
+        Msg.objects.create(
+            Username = to_username,
+            Seq = seq,
+            From = from_username,
+            Type = 'text',
+            ContentID = cid
         )
         response['state'] = 'ok'
         response['msg'] = 'send successfully'
@@ -71,11 +94,23 @@ def image(request):
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 此处未创建message表格，暂未实现插入到message
-    
-
     # 为消息设定一个id，这里使用的是消息表的长度+1
     cid = len(Content_Image.objects.all()) + 1
+
+    seq = 1
+    # 处理seq，在Msg根据接收方用户名找到上一个seq，若不存在则初始化为1
+    try:
+        t_msg = Msg.objects.filter(Username = to_username)
+
+    except Exception as e:
+        response['msg'] = 'db error'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
+    else:
+        # 找到该用户最大的seq
+        if t_msg.count() > 0:
+            for msg in t_msg:
+                seq = max(seq, msg.Seq)
+            seq += 1
 
     # 图片如何转换到存储格式，暂未实现
 
@@ -84,6 +119,13 @@ def image(request):
         Content_Image.objects.create(
             Cid = cid,
             Cimage = t_data
+        )
+        Msg.objects.create(
+            Username = to_username,
+            Seq = seq,
+            From = from_username,
+            Type = 'image',
+            ContentID = cid
         )
         response['state'] = 'ok'
         response['msg'] = 'send successfully'
@@ -139,6 +181,7 @@ def image_detail(request, image_id):
     # 数据库操作,查询消息
     try:
         t_image = Content_Image.objects.filter(Cid = image_id)
+        
         # 此处是否需要实现，存储格式转换成图片再返回，待实现
         
         
