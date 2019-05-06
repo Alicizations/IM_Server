@@ -112,13 +112,11 @@ def image(request):
                 seq = max(seq, msg.Seq)
             seq += 1
 
-    # 图片如何转换到存储格式，暂未实现
-
     # 数据库操作,插入图片
     try:
         Content_Image.objects.create(
             Cid = cid,
-            Cimage = t_data
+            Cimage = "img/"+ t_data.name
         )
         Msg.objects.create(
             Username = to_username,
@@ -127,6 +125,13 @@ def image(request):
             Type = 'image',
             ContentID = cid
         )
+        
+        # 保存文件
+        fname = settings.MEDIA_ROOT + "/img/" + f1.name
+        with open(fname,'wb') as pic:
+            for c in f1.chunks():
+                pic.write(c)
+
         response['state'] = 'ok'
         response['msg'] = 'send successfully'
     except Exception as e:
@@ -182,15 +187,12 @@ def image_detail(request, image_id):
     try:
         t_image = Content_Image.objects.filter(Cid = image_id)
         
-        # 此处是否需要实现，存储格式转换成图片再返回，待实现
-        
-        
     except Exception as e:
         response['msg'] = 'db error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
         if t_image.count() == 1:
-            temp = model_to_dict(t_image[0])
+            temp = model_to_dict(t_image[0].Cimage)
             response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
             response['msg'] = 'no data'
