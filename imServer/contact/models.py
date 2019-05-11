@@ -7,4 +7,4 @@ class Contact(models.Model):
     Friend = models.CharField(max_length = 20)
 
     def __str__(self):
-        return self.Friends
+        return self.Friend
