@@ -1,6 +1,7 @@
 import asyncio
 import json
 import websockets
+import time
 
 USERS = {}
 
@@ -20,6 +21,8 @@ async def disconnect(username):
         del USERS[username]
     else:
         print('no such user')
+    if '*_temp' in USERS:
+        del USERS['*_temp']
 
 async def notify(username):
     if username in USERS:
@@ -40,7 +43,7 @@ async def handle(websocket, path):
 
             action = body['action']
             data = body['data']
-            print(body, action, data)
+            print(time.strftime("%Y-%m-%d %H:%M:%S: ", time.localtime()), body)
 
             if action == 'connect':
                 await connect(data, websocket)
@@ -51,14 +54,17 @@ async def handle(websocket, path):
             else:
                 print(rmsg('fail', 'no such action'))
     except Exception as e:
-        print(e)
+        # print(e)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ': no action or data')
         await websocket.send(rmsg('fail', 'handle error'))
     finally:
-        print('disconnect')
-        print(USERS)
-        # await disconnect(data)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ': disconnect')
+        await disconnect(data)
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), USERS)
+        
         
 
 start_server = websockets.serve(handle, '10.104.198.199', 6789)
+# start_server = websockets.serve(handle, '172.18.32.97', 6789)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

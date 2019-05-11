@@ -8,6 +8,7 @@ from message.models import Msg
 from .models import Content_Text
 from .models import Content_Image
 from websocket import create_connection
+import time
 
 
 # Create your views here.
@@ -61,7 +62,8 @@ def text(request):
     try:
         Content_Text.objects.create(
             Cid = cid,
-            Cstr = t_data
+            Cstr = t_data,
+            Timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         )
         Msg.objects.create(
             Username = to_username,
@@ -130,7 +132,8 @@ def image(request):
     try:
         Content_Image.objects.create(
             Cid = cid,
-            Cimage = "img/"+ t_data.name
+            Cimage = "img/"+ t_data.name,
+            Timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         )
         Msg.objects.create(
             Username = to_username,
