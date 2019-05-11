@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
+    'history.apps.HistoryConfig',
     'message.apps.MessageConfig',
     'contact.apps.ContactConfig',
     'content.apps.ContentConfig',
