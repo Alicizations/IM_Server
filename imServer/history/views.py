@@ -47,8 +47,10 @@ def personal(request, t_username):
     else:
         # 根据两类消息的ContentID来找出所有content
         # 这里先假设所有记录为文字类型，图片类型未知结果，待测试
-        Content_Text ctArray = []
-        Content_Image ciArray = []
+        # Content_Text 
+        ctArray = []
+        # Content_Image 
+        ciArray = []
 
         for msg in cur_to_t_msg:
             if msg.Type = 'text':
