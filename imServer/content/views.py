@@ -7,6 +7,7 @@ from contact.models import Contact
 from message.models import Msg
 from .models import Content_Text
 from .models import Content_Image
+from websocket import create_connection
 
 
 # Create your views here.
@@ -71,6 +72,10 @@ def text(request):
         )
         response['state'] = 'ok'
         response['msg'] = 'send successfully'
+
+        # 用websocket即时告知用户有新消息
+        tellUserReceiveMessage(to_username)
+        
     except Exception as e:
         response['msg'] = 'db error'
 
@@ -89,10 +94,13 @@ def image(request):
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     
+    # 已经登录, 所以拿取用户信息
+    from_username = request.session['login_id']
+
     # 获取参数
     try:
         t_data = request.POST['data']
-        t_username = request.POST['to']
+        to_username = request.POST['to']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
@@ -140,6 +148,10 @@ def image(request):
 
         response['state'] = 'ok'
         response['msg'] = 'send successfully'
+
+        # 用websocket即时告知用户有新消息
+        tellUserReceiveMessage(to_username)
+
     except Exception as e:
         response['msg'] = 'db error'
 
@@ -224,3 +236,15 @@ def checkRelationship(user_now, user_target):
             return True
     
     return False
+
+def tellUserReceiveMessage(username):
+    ws = create_connection('ws://118.89.65.154:6789')
+
+    msg = {'action': 'new', 'data': username}
+    print('Sending msg to User ' + username)
+    ws.send(json.dumps(msg))
+
+    result =  ws.recv()
+    print('Received: %s' % result)
+
+    ws.close()
