@@ -126,7 +126,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#设置静态文件路径为主目录下的media文件夹
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')     
-#url映射
+
 MEDIA_URL = '/media/'                                                
