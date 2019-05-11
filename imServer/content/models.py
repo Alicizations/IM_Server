@@ -8,7 +8,7 @@ class Content_Text(models.Model):
     Timestamp = models.CharField(max_length = 20)
 
     def __str__(self):
-        return self.Cid
+        return str(self.Cid)
 
 class Content_Image(models.Model):
     Cid = models.AutoField(primary_key = True)
@@ -17,4 +17,4 @@ class Content_Image(models.Model):
     Timestamp = models.CharField(max_length = 20)
 
     def __str__(self):
-        return self.Cid
+        return str(self.Cid)

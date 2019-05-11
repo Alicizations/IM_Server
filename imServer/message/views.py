@@ -31,7 +31,7 @@ def messageTable(request, seq):
         else:
             temp = []
             for index in range(t_msg.count()):
-                temp.append(model_to_dict(t_user[index]))
+                temp.append(model_to_dict(t_msg[index]))
 
             response = {'state':'ok', 'msg':'ok', "data":temp}
 
