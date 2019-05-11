@@ -6,10 +6,8 @@ import json
 from account.models import User
 from contact.models import Contact
 from message.models import Msg
-from .models import Content_Text
-from .models import Content_Image
-from websocket import create_connection
-import time
+# from .models import Content_Text
+# from .models import Content_Image
 
 # Create your views here.
 # 返回聊天记录
@@ -53,15 +51,15 @@ def personal(request, t_username):
         ciArray = []
 
         for msg in cur_to_t_msg:
-            if msg.Type = 'text':
+            if msg.Type == 'text':
                 ctArray.append(Content_Text.objects.filter(Cid = msg.ContentID))
-            elif msg.Type = 'image':
+            elif msg.Type == 'image':
                 ciArray.append(Content_Image.objects.filter(Cid = msg.ContentID))
 
         for msg in t_to_cur_msg:
-            if msg.Type = 'text':
+            if msg.Type == 'text':
                 ctArray.append(Content_Text.objects.filter(Cid = msg.ContentID))
-            elif msg.Type = 'image':
+            elif msg.Type == 'image':
                 ciArray.append(Content_Image.objects.filter(Cid = msg.ContentID))
 
         # 根据ContentID来进行append，保证时间有序
