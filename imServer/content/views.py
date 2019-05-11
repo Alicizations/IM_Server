@@ -10,7 +10,7 @@ from .models import Content_Image
 
 
 # Create your views here.
-# 上传一个string，只允许post方法
+# 上传一个string, 只允许post方法
 def text(request):
     response = {'state':'fail', 'msg':'no msg'}
 
@@ -35,11 +35,14 @@ def text(request):
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 为消息设定一个id，这里使用的是消息表的长度+1
+    if not checkRelationship(from_username, to_username):
+        return jsonMSG(msg = 'you are not friends!')
+
+    # 为消息设定一个id, 这里使用的是消息表的长度+1
     cid = len(Content_Text.objects.all()) + 1
 
     seq = 1
-    # 处理seq，在Msg根据接收方用户名找到上一个seq，若不存在则初始化为1
+    # 处理seq, 在Msg根据接收方用户名找到上一个seq, 若不存在则初始化为1
     try:
         t_msg = Msg.objects.filter(Username = to_username)
 
@@ -94,11 +97,14 @@ def image(request):
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    # 为消息设定一个id，这里使用的是消息表的长度+1
+    if not checkRelationship(from_username, to_username):
+        return jsonMSG(msg = 'you are not friends!')
+
+    # 为消息设定一个id, 这里使用的是消息表的长度+1
     cid = len(Content_Image.objects.all()) + 1
 
     seq = 1
-    # 处理seq，在Msg根据接收方用户名找到上一个seq，若不存在则初始化为1
+    # 处理seq, 在Msg根据接收方用户名找到上一个seq, 若不存在则初始化为1
     try:
         t_msg = Msg.objects.filter(Username = to_username)
 
@@ -198,3 +204,23 @@ def image_detail(request, image_id):
             response['msg'] = 'no data'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+def jsonMSG(state = 'fail', msg = 'no msg'):
+    response = {'state':state, 'msg':msg, 'data':[]}
+    return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+def checkRelationship(user_now, user_target):
+
+    # 在联系人表查找是否存在两人的好友关系
+    try:
+        t_contact = Contact.objects.filter(Username = user_now, Friend = user_target)
+    except Exception as e:
+        print(e)
+        return False
+    else:
+        if t_contact.count() <= 0:
+            return False
+        else:
+            return True
+    
+    return False

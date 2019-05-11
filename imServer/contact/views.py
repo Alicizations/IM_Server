@@ -32,22 +32,14 @@ def info(request):
         response['msg'] = 'db error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
-        if t_contact.count() == 1:
-            t_contact = t_contact[0]
-            t_friends = t_contact.Friends
-            # 处理字符串,获取好友
-            friends = t_friends.spilt()
-            for friend_ID in friends_str:
-                try:
-                    t_user = User.objects.filter(UserID = friend_ID)
-                except Exception as e:
-                    response['msg'] = 'db error'
-                    return HttpResponse(json.dumps(response), content_type = 'application/json')
-                response['data'].append(t_user)
+        if t_contact.count() <= 0:
             response['state'] = 'ok'
-            response['msg'] = 'get successfully'
+            response['msg'] = 'no friend'
         else:
-            response['msg'] = 'no such user'
+            temp = []
+            for x in t_contact:
+                temp.append(x)
+            response = {'state':'ok', 'msg':'friends', "data":temp}
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
@@ -78,15 +70,24 @@ def add(request):
     # 数据库操作
     try:
         t_user = User.objects.filter(Username = r_username)
-        t_contact = Contact.objects.filter(Username = t_username)
+        t_contact = Contact.objects.filter(Username = t_username, Friend = r_username)
     except Exception as e:
         response['msg'] = 'db error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
         if t_user.count() <= 0:
             response['msg'] = 'user does not exist'
+        elif t_contact.count() > 0:
+            response['msg'] = 'already exist'
         else:
-            t_contact.Friends = str(t_contact.Friends) + ',' + t_user.UserID
+            Contact.objects.create(
+                Username = t_username,
+                Friend = r_username
+            )
+            Contact.objects.create(
+                Username = r_username,
+                Friend = t_username
+            )
             response['state'] = 'ok'
             response['msg'] = 'add friends successfully'
 
@@ -119,21 +120,22 @@ def delete(request):
 
     # 数据库操作
     try:
-        t_user = User.objects.filter(Username = r_username)
-        t_contact = Contact.objects.filter(Username = t_username)
+        t_contact_t = Contact.objects.filter(Username = t_username, Friend = r_username)
+        t_contact_r = Contact.objects.filter(Username = r_username, Friend = t_username)
     except Exception as e:
         response['msg'] = 'db error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
-        # 解析contact里面的字符串
-        friends_strs = t_contact.Friends.split()
-        # 未添加该好友
-        if str(t_user.UserID) not in friends_strs:
-            response['msg'] = 'user does not exist'
-        else:
-            friends_strs.remove(str(t_user.UserID))
-            friends = ','.join(friends_strs)
-            t_contact.Friends = friends
+        if t_contact_t.count() <= 0 and t_contact_r.count() <= 0:
+            response['msg'] = 'no such relationship'
+        elif t_contact_t.count() > 0:
+            t_contact_t = t_contact_t[0]
+            t_contact_t.delete()
+            response['state'] = 'ok'
+            response['msg'] = 'delete friends successfully'
+        elif t_contact_r.count() > 0:
+            t_contact_r = t_contact_r[0]
+            t_contact_r.delete()
             response['state'] = 'ok'
             response['msg'] = 'delete friends successfully'
 
