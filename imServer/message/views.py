@@ -2,6 +2,8 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse
 import json
 from .models import Msg
+from content.models import Content_Text
+from content.models import Content_Image
 
 def messageTable(request, seq):
     response = {'state':'fail', 'msg':'no msg'}
@@ -30,8 +32,12 @@ def messageTable(request, seq):
             response['msg'] = 'no data'
         else:
             temp = []
+            # 返回具体信息
             for index in range(t_msg.count()):
-                temp.append(model_to_dict(t_msg[index]))
+                msg_entry = t_msg[index]
+                msg_dict = model_to_dict(msg_entry)
+                msg_dict['content'], msg_dict['timestamp'] = getContentAndTimeByTypeAndCid(msg_entry.Type, msg_entry.ContentID)
+                temp.append(msg_dict)
 
             response = {'state':'ok', 'msg':'ok', "data":temp}
 
@@ -39,3 +45,35 @@ def messageTable(request, seq):
             response['msg'] = 'get message successfully'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+# 根据类型和cid获取具体的content返回
+def getContentAndTimeByTypeAndCid(msg_type, msg_cid):
+    # 简单错误处理
+    if msg_cid <= 0:
+        return '', ''
+
+    if msg_type == 'text':
+        try:
+            t_content = Content_Text.objects.filter(Cid = msg_cid)
+        except Exception as e:
+            print('msg return text db error: ', e)
+            return '', ''
+        else:
+            if t_content.count() <= 0:
+                return '', ''
+            else:
+                return t_content[0].Cstr, t_content[0].Timestamp
+        
+    elif msg_type == 'image':
+        try:
+            t_content = Content_Image.objects.filter(Cid = msg_cid)
+        except Exception as e:
+            print('msg return image db  error: ', e)
+            return '', ''
+        else:
+            if t_content.count() <= 0:
+                return '', ''
+            else:
+                return t_content[0].Cimage, t_content[0].Timestamp
+    else:
+        return '', ''
