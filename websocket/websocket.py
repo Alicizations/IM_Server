@@ -59,7 +59,7 @@ async def handle(websocket, path):
         await websocket.send(rmsg('fail', 'handle error'))
     finally:
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ': disconnect')
-        await disconnect(data)
+        # await disconnect(data)
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), USERS)
         
         
