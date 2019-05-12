@@ -5,4 +5,4 @@ server of iOS project IM
 - uwsgi_django_config: uwsgi 配置文件
 - websocket: websocket 相关
 
-[API文档](https://alicizations.github.io/IM_Server/index.html)
+[API文档](https://alicizations.github.io/IM_Server/)
