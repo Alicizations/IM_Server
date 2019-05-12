@@ -1,0 +1,725 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "IM_Server API文档",
+    "version": "1.0.0",
+    "title": "IM_Server"
+  },
+  "host": "127.0.0.1:8000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "account",
+      "description": "账户"
+    },
+    {
+      "name": "contact",
+      "description": "联系人"
+    },
+    {
+      "name": "content",
+      "description": "内容"
+    },
+    {
+      "name": "message",
+      "description": "消息表"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/account/register": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "注册账户",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "注册信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/account/login": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "登录",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "登录信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "summary": "获取登录状态",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/account/logout": {
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "summary": "登出",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "注册信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/account/info": {
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "summary": "获取账户信息",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnInfo"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "修改账户信息",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "要修改的账户信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/modifyInfo"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/account/password": {
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "summary": "修改密码",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "密码信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/passworldInfo"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/contact/info": {
+      "get": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "获取好友信息",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/contactInfo"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/contact/add": {
+      "post": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "添加好友",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "好友信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addInfo"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/contact/delete": {
+      "post": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "删除好友",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "好友信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addInfo"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/content/text": {
+      "post": {
+        "tags": [
+          "content"
+        ],
+        "summary": "发送文字信息",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "文字信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contentInfo"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/content/image": {
+      "post": {
+        "tags": [
+          "content"
+        ],
+        "summary": "发送图片信息",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "图片信息",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contentInfo"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/returnMessage"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    },
+    "/message/{seq}": {
+      "get": {
+        "tags": [
+          "message"
+        ],
+        "summary": "获取信息",
+        "parameters": [
+          {
+            "name": "seq",
+            "in": "path",
+            "required": true,
+            "description": "消息seqence",
+            "type": "integer"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "能够处理的请求",
+            "schema": {
+              "$ref": "#/definitions/messageInfo"
+            }
+          },
+          "404": {
+            "description": "不能处理的请求"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "Username",
+        "Password"
+      ],
+      "properties": {
+        "UserID": {
+          "type": "integer"
+        },
+        "Username": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        },
+        "Phone": {
+          "type": "string"
+        },
+        "Email": {
+          "type": "string"
+        },
+        "Nickname": {
+          "type": "string"
+        },
+        "Avator": {
+          "type": "integer"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    },
+    "LoginInfo": {
+      "type": "object",
+      "required": [
+        "Username",
+        "Password"
+      ],
+      "properties": {
+        "Username": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "LoginInfo"
+      }
+    },
+    "returnMessage": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "fail"
+          ]
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "returnMessage"
+      }
+    },
+    "returnInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "fail"
+          ]
+        },
+        "msg": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "UserID": {
+              "type": "integer"
+            },
+            "Username": {
+              "type": "string"
+            },
+            "Phone": {
+              "type": "string"
+            },
+            "Email": {
+              "type": "string"
+            },
+            "Nickname": {
+              "type": "string"
+            },
+            "Avator": {
+              "type": "integer"
+            },
+            "Description": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "returnInfo"
+      }
+    },
+    "modifyInfo": {
+      "type": "object",
+      "properties": {
+        "Phone": {
+          "type": "string"
+        },
+        "Email": {
+          "type": "string"
+        },
+        "Nickname": {
+          "type": "string"
+        },
+        "Avator": {
+          "type": "integer"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "modifyInfo"
+      }
+    },
+    "passworldInfo": {
+      "type": "object",
+      "properties": {
+        "old_password": {
+          "type": "string"
+        },
+        "new_password": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "passworldInfo"
+      }
+    },
+    "contactInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "fail"
+          ]
+        },
+        "msg": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Username": {
+                "type": "string"
+              },
+              "Friend": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "contactInfo"
+      }
+    },
+    "addInfo": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "addInfo"
+      }
+    },
+    "contentInfo": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "contentInfo"
+      }
+    },
+    "messageInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "fail"
+          ]
+        },
+        "msg": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Username": {
+                "type": "string"
+              },
+              "Seq": {
+                "type": "integer"
+              },
+              "From": {
+                "type": "string"
+              },
+              "Type": {
+                "type": "string"
+              },
+              "ContentID": {
+                "type": "integer"
+              },
+              "content": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "messageInfo"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "api.yaml",
+    "url": "http://swagger.io"
+  }
+}
