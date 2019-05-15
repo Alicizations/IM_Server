@@ -4,6 +4,7 @@ import json
 from .models import Msg
 from content.models import Content_Text
 from content.models import Content_Image
+from content.models import Content_AddMsg
 
 def messageTable(request, seq):
     response = {'state':'fail', 'msg':'no msg'}
@@ -36,7 +37,7 @@ def messageTable(request, seq):
             for index in range(t_msg.count()):
                 msg_entry = t_msg[index]
                 msg_dict = model_to_dict(msg_entry)
-                msg_dict['content'], msg_dict['timestamp'] = getContentAndTimeByTypeAndCid(msg_entry.Type, msg_entry.ContentID)
+                msg_dict['content'] = getContentAndTimeByTypeAndCid(msg_entry.Type, msg_entry.ContentID)
                 temp.append(msg_dict)
 
             response = {'state':'ok', 'msg':'ok', "data":temp}
@@ -47,33 +48,43 @@ def messageTable(request, seq):
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
 # 根据类型和cid获取具体的content返回
+# 如果返回空(''), 代表存在异常或数据不存在
 def getContentAndTimeByTypeAndCid(msg_type, msg_cid):
     # 简单错误处理
     if msg_cid <= 0:
-        return '', ''
+        return ''
 
     if msg_type == 'text':
         try:
             t_content = Content_Text.objects.filter(Cid = msg_cid)
         except Exception as e:
             print('msg return text db error: ', e)
-            return '', ''
+            return ''
         else:
             if t_content.count() <= 0:
-                return '', ''
+                return ''
             else:
-                return t_content[0].Cstr, t_content[0].Timestamp
+                return model_to_dict(t_content[0])
         
     elif msg_type == 'image':
         try:
             t_content = Content_Image.objects.filter(Cid = msg_cid)
         except Exception as e:
             print('msg return image db  error: ', e)
-            return '', ''
+            return ''
         else:
             if t_content.count() <= 0:
-                return '', ''
+                return ''
             else:
-                return t_content[0].Cimage, t_content[0].Timestamp
+                return model_to_dict(t_content[0])
+
+    elif msg_type == 'addRequest':
+        try:
+            t_content = Content_AddMsg.objects.filter(Cid = msg_cid)
+        except Exception as e:
+            return ''
+        else:
+            return model_to_dict(t_content[0])
+
     else:
-        return '', ''
+        return ''

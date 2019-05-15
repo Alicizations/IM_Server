@@ -24,6 +24,7 @@ class Content_AddMsg(models.Model):
     # 添加好友的请求的来源和目标用户
     From = models.CharField(max_length = 20)
     To = models.CharField(max_length = 20)
+    Info = models.CharField(max_length = 40)
     Timestamp = models.CharField(max_length = 20)
 
     def __str__(self):

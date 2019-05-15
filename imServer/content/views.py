@@ -44,20 +44,11 @@ def text(request):
     # 为消息设定一个id, 这里使用的是消息表的长度+1
     cid = len(Content_Text.objects.all()) + 1
 
-    seq = 1
-    # 处理seq, 在Msg根据接收方用户名找到上一个seq, 若不存在则初始化为1
-    try:
-        t_msg = Msg.objects.filter(Username = to_username)
+    seq = checkSeqByUsername(to_username)
 
-    except Exception as e:
-        response['msg'] = 'db error'
-        return HttpResponse(json.dumps(response), content_type = 'application/json')
-    else:
-        # 找到该用户最大的seq
-        if t_msg.count() > 0:
-            for msg in t_msg:
-                seq = max(seq, msg.Seq)
-            seq += 1
+    # seq 错误处理
+    if seq == -1:
+        return jsonMSG(msg = 'get seq fail')
 
     # 数据库操作,插入消息,并插入到message
     try:
@@ -114,20 +105,10 @@ def image(request):
     # 为消息设定一个id, 这里使用的是消息表的长度+1
     cid = len(Content_Image.objects.all()) + 1
 
-    seq = 1
-    # 处理seq, 在Msg根据接收方用户名找到上一个seq, 若不存在则初始化为1
-    try:
-        t_msg = Msg.objects.filter(Username = to_username)
-
-    except Exception as e:
-        response['msg'] = 'db error'
-        return HttpResponse(json.dumps(response), content_type = 'application/json')
-    else:
-        # 找到该用户最大的seq
-        if t_msg.count() > 0:
-            for msg in t_msg:
-                seq = max(seq, msg.Seq)
-            seq += 1
+    seq = checkSeqByUsername(to_username)
+    # seq 错误处理
+    if seq == -1:
+        return jsonMSG(msg = 'get seq fail')
 
     # 数据库操作,插入图片
     try:
@@ -270,6 +251,7 @@ def add(request):
     try:
         to_username = request.POST['to']
         to_cid = request.POST['cid']
+        t_info = request.POST['info']
     except Exception as e:
         return jsonMSG(msg = 'POST parameter error')
 
@@ -290,16 +272,21 @@ def add(request):
         # 在 user 的 messageTable 添加信息
         # websocket 通知用户
         try:
+            seq = checkSeqByUsername(to_username)
+            # seq 错误处理
+            if seq == -1:
+                return jsonMSG(msg = 'get seq fail')
             Content_AddMsg.objects.create(
                 From = from_username,
                 To = to_username,
+                Info = t_info,
                 Timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             )
             Msg.objects.create(
                 Username = to_username,
                 Seq = seq,
                 From = from_username,
-                Type = 'text',
+                Type = 'addRequest',
                 ContentID = cid
             )
         except Exception as e:
@@ -326,6 +313,10 @@ def add(request):
                 # 请求符合, 添加为好友
                 else:
                     try:
+                        seq = checkSeqByUsername(from_username)
+                        # seq 错误处理
+                        if seq == -1:
+                            return jsonMSG(msg = 'get seq fail')
                         r_contact = Contact.objects.filter(Username = from_username, Friend = to_username)
                         if r_contact.count() <= 0:
                             Contact.objects.create(
@@ -338,7 +329,30 @@ def add(request):
                                 Username = to_username,
                                 Friend = from_username
                             )
+                        Msg.objects.create(
+                            Username = from_username,
+                            Seq = seq,
+                            From = to_username,
+                            Type = 'addComfirm',
+                            ContentID = 0
+                        )
+                        tellUserReceiveMessage(from_username)
                     except Exception as e:
-                        return jsonMSG(msg = 'db error when add contact')
+                        return jsonMSG(msg = 'db or websocket error when add contact')
                     else:
                         return jsonMSG(state = 'ok', msg = 'add contact successfully')
+
+
+def checkSeqByUsername(username):
+    seq = 1
+    # 处理seq, 在Msg根据接收方用户名找到上一个seq, 若不存在则初始化为1
+    try:
+        t_msg = Msg.objects.filter(Username = username)
+    except Exception as e:
+        return -1
+    else:
+        # 找到该用户最大的seq
+        if t_msg.count() > 0:
+            seq = t_msg.count() + 1
+
+    return seq

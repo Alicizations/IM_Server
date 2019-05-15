@@ -480,6 +480,8 @@ definitions:
         type: "integer"
       to:
         type: "string"
+      info:
+        type: "string"
     xml:
       name: "contentAddRequest"
       
