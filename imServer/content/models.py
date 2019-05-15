@@ -18,3 +18,13 @@ class Content_Image(models.Model):
 
     def __str__(self):
         return str(self.Cid)
+
+class Content_AddMsg(models.Model):
+    Cid = models.AutoField(primary_key = True)
+    # 添加好友的请求的来源和目标用户
+    From = models.CharField(max_length = 20)
+    To = models.CharField(max_length = 20)
+    Timestamp = models.CharField(max_length = 20)
+
+    def __str__(self):
+        return self.From + ' -> ' + self.To

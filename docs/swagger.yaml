@@ -181,29 +181,29 @@ paths:
         404:
           description: "不能处理的请求"
 
-  /contact/add:
-    post:
-      tags:
-      - "contact"
-      summary: "添加好友"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "好友信息"
-        required: true
-        schema:
-          $ref: "#/definitions/addInfo"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "能够处理的请求"
-          schema:
-            $ref: '#/definitions/returnMessage'
-        404:
-          description: "不能处理的请求"
+  # /contact/add:
+  #   post:
+  #     tags:
+  #     - "contact"
+  #     summary: "添加好友"
+  #     parameters:
+  #     - in: "body"
+  #       name: "body"
+  #       description: "好友信息"
+  #       required: true
+  #       schema:
+  #         $ref: "#/definitions/addInfo"
+  #     consumes:
+  #     - "application/json"
+  #     produces:
+  #     - "application/json"
+  #     responses:
+  #       200:
+  #         description: "能够处理的请求"
+  #         schema:
+  #           $ref: '#/definitions/returnMessage'
+  #       404:
+  #         description: "不能处理的请求"
           
   /contact/delete:
     post:
@@ -276,7 +276,31 @@ paths:
             $ref: '#/definitions/returnMessage'
         404:
           description: "不能处理的请求"
-          
+  
+  /content/add:
+    post:
+      tags:
+      - "content"
+      summary: "发送好友请求或是同意好友请求"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "用户信息"
+        required: true
+        schema:
+          $ref: "#/definitions/contentAddRequest"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "能够处理的请求"
+          schema:
+            $ref: '#/definitions/returnMessage'
+        404:
+          description: "不能处理的请求"
+
   /message/{seq}:
     get:
       tags:
@@ -448,6 +472,16 @@ definitions:
         type: "string"
     xml:
       name: "contentInfo"
+
+  contentAddRequest:
+    type: "object"
+    properties:
+      cid:
+        type: "integer"
+      to:
+        type: "string"
+    xml:
+      name: "contentAddRequest"
       
   messageInfo:
     type: "object"

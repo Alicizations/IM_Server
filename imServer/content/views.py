@@ -7,6 +7,7 @@ from contact.models import Contact
 from message.models import Msg
 from .models import Content_Text
 from .models import Content_Image
+from .models import Content_AddMsg
 from websocket import create_connection
 import time
 
@@ -241,7 +242,8 @@ def checkRelationship(user_now, user_target):
     return False
 
 def tellUserReceiveMessage(username):
-    ws = create_connection('ws://118.89.65.154:6789')
+    # ws = create_connection('ws://118.89.65.154:6789')
+    ws = create_connection('ws://172.18.32.97:6789')
 
     msg = {'action': 'new', 'data': username}
     print('Sending msg to User ' + username)
@@ -251,3 +253,92 @@ def tellUserReceiveMessage(username):
     print('Received: %s' % result)
 
     ws.close()
+
+def add(request):
+    # 要在登录状态下
+    if 'login_id' not in request.session:
+        return jsonMSG(msg = 'no login')
+
+    # 只允许POST方法
+    if request.method != 'POST':
+        return jsonMSG(msg = 'wrong method')
+    
+    # 已经登录, 所以拿取用户信息
+    from_username = request.session['login_id']
+
+    # 获取参数, cid == 0 则是申请添加; cid > 0则是同意添加, 需要查询数据库
+    try:
+        to_username = request.POST['to']
+        to_cid = request.POST['cid']
+    except Exception as e:
+        return jsonMSG(msg = 'POST parameter error')
+
+    # 查询用户是否存在
+    try:
+        t_user = User.objects.filter(Username = to_username)
+    except Exception as e:
+        return jsonMSG(msg = 'db error')
+    else:
+        # 查询不到该用户, 申请失败
+        if t_user.count() <= 0:
+            return jsonMSG(msg = 'no such user')
+
+    # 好友申请
+    if to_cid <= 0:
+        # 创建申请信息
+        # 创建 content_add 信息
+        # 在 user 的 messageTable 添加信息
+        # websocket 通知用户
+        try:
+            Content_AddMsg.objects.create(
+                From = from_username,
+                To = to_username,
+                Timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            )
+            Msg.objects.create(
+                Username = to_username,
+                Seq = seq,
+                From = from_username,
+                Type = 'text',
+                ContentID = cid
+            )
+        except Exception as e:
+            return jsonMSG(msg = 'db error when add request')
+        else:
+            # 用websocket告知用户有新消息
+            tellUserReceiveMessage(to_username)
+            return jsonMSG(state = 'ok', msg = 'send request successfully')
+
+    # cid > 0, 为同意申请
+    else:
+        try:
+            t_addRequest = Content_AddMsg.objects.filter(Cid = to_cid)
+        except Exception as e:
+            return jsonMSG(msg = 'db error when check request')
+        else:
+            if t_addRequest.count() <= 0:
+                return jsonMSG(msg = 'no such request')
+            else:
+                t_addRequest = t_addRequest[0]
+                # 如果查询到的请求不符合, 则返回错误
+                if t_addRequest.From != to_username or t_addRequest.To != from_username:
+                    return jsonMSG(msg = 'inconformity')
+                # 请求符合, 添加为好友
+                else:
+                    try:
+                        r_contact = Contact.objects.filter(Username = from_username, Friend = to_username)
+                        if r_contact.count() <= 0:
+                            Contact.objects.create(
+                                Username = from_username,
+                                Friend = to_username
+                            )
+                        r_contact = Contact.objects.filter(Username = to_username, Friend = from_username)
+                        if r_contact.count() <= 0:
+                            Contact.objects.create(
+                                Username = to_username,
+                                Friend = from_username
+                            )
+                    except Exception as e:
+                        return jsonMSG(msg = 'db error when add contact')
+                    else:
+                        return jsonMSG(state = 'ok', msg = 'add contact successfully')

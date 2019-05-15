@@ -4,6 +4,8 @@ from django.http import HttpResponse
 import json
 from account.models import User
 from .models import Contact
+# from content.models import Content_AddMsg
+# from message.models import Msg
 
 # Create your views here.
 
@@ -38,7 +40,7 @@ def info(request):
         else:
             temp = []
             for x in t_contact:
-                temp.append(x)
+                temp.append(model_to_dict(x))
             response = {'state':'ok', 'msg':'friends', "data":temp}
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
@@ -60,12 +62,16 @@ def add(request):
     # 已经登录, 所以拿取用户信息
     t_username = request.session['login_id']
 
-    # 获取参数
+    # 获取参数, cid == 0 则是申请添加; cid > 0则是同意添加, 需要查询数据库
     try:
         r_username = request.POST['username']
+        # r_cid = request.POST['cid']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+    # if cid == 0:
+        
 
     # 数据库操作
     try:
