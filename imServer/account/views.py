@@ -162,6 +162,27 @@ def info(request):
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
+def othersInfo(request, t_username):
+    if request.method != 'GET':
+        response['msg'] = 'wrong method'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+    # 这里进入GET方法
+    # 数据库操作
+    try:
+        t_user = User.objects.filter(Username = t_username)
+    except Exception as e:
+        response['msg'] = 'db error'
+        return HttpResponse(json.dumps(response), content_type = 'application/json')
+    else:
+        if t_user.count() == 1:
+            temp = model_to_dict(t_user[0])
+            response = {'state':'ok', 'msg':'ok', "data":temp}
+        else:
+            response['msg'] = 'no data'
+
+    return HttpResponse(json.dumps(response), content_type = 'application/json')
+
 def changePassword(request):
     # 要在登录状态下
     response = {'state':'fail', 'msg':'no msg'}

@@ -139,7 +139,30 @@ paths:
             $ref: '#/definitions/returnMessage'
         404:
           description: "不能处理的请求"
-    
+
+  /account/info/{username}:
+    get:
+      tags:
+      - "account"
+      summary: "获取账户信息"
+      parameters:
+      - name: 'username'
+        in: 'path'
+        required: true
+        description: '账户名'
+        type: 'string'
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "能够处理的请求"
+          schema:
+            $ref: '#/definitions/returnInfo'
+        404:
+          description: "不能处理的请求"
+
   /account/password:
     post:
       tags:
