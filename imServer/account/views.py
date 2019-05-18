@@ -3,6 +3,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse
 import json
 from .models import User
+from content.views import jsonMSG
 
 # Create your views here.
 
@@ -46,7 +47,7 @@ def register(request):
 def logout(request):
     response = {'state':'fail', 'msg':'no msg'}
     # 只允许通过GET方法退出登录
-    if request.method != 'GET':
+    if request.method != 'DELETE':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
@@ -191,7 +192,7 @@ def changePassword(request):
         response['msg'] = 'no login'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-    if request.method != 'POST':
+    if request.method != 'PUT':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
 
@@ -200,8 +201,8 @@ def changePassword(request):
 
     # 获取参数
     try:
-        old_password = request.POST['old_password']
-        new_password = request.POST['new_password']
+        old_password = request.PUT['old_password']
+        new_password = request.PUT['new_password']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
@@ -223,3 +224,53 @@ def changePassword(request):
             response['msg'] = 'change successfully'
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
+
+def changeInfo(request, t_attr):
+
+    # 要在登录状态下
+    if 'login_id' not in request.session:
+        return jsonMSG(msg = 'no login')
+
+    if request.method != 'PUT':
+        return jsonMSG(msg = 'wrong method')
+
+    # 已经登录, 所以拿取用户信息
+    t_username = request.session['login_id']
+
+    # 获取参数
+    try:
+        t_value = request.PUT['value']
+    except Exception as e:
+        return jsonMSG(msg = 'PUT parameter error')
+
+    # 数据库操作
+    try:
+        t_user = User.objects.filter(Username = t_username)
+    except Exception as e:
+        return jsonMSG(msg = 'db error')
+    else:
+        if t_user.count() <= 0:
+            return jsonMSG(msg = 'no such user')
+        else:
+            t_user = t_user[0]
+            if t_attr == 'Password':
+                t_user.Password = t_value
+                t_user.save()
+            elif t_attr == 'Phone':
+                t_user.Phone = t_value
+                t_user.save()
+            elif t_attr == 'Email':
+                t_user.Email = t_value
+                t_user.save()
+            elif t_attr == 'Nickname':
+                t_user.Nickname = t_value
+                t_user.save()
+            elif t_attr == 'Description':
+                t_user.Description = t_value
+                t_user.save()
+            elif t_attr == 'Avator':
+                t_user.Avator = t_value
+                t_user.save()
+            
+
+    return jsonMSG(state = 'ok', msg = 'change successfully')

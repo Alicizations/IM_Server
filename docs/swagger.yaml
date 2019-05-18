@@ -1,150 +1,185 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "IM_Server API文档"
-  version: "1.0.0"
-  title: "IM_Server"
-host: "127.0.0.1:8000"
-basePath: "/"
+  description: 'IM_Server API文档'
+  version: '1.0.0'
+  title: 'IM_Server'
+host: '127.0.0.1:8000'
+basePath: '/'
 
 tags:
-- name: "account"
-  description: "账户"
-- name: "contact"
-  description: "联系人"
-- name: "content"
-  description: "内容"
-- name: "message"
-  description: "消息表"
+- name: 'account'
+  description: '账户'
+- name: 'contact'
+  description: '联系人'
+- name: 'content'
+  description: '内容'
+- name: 'message'
+  description: '消息表'
 schemes:
-- "http"
+- 'http'
 
 paths:
   /account/register:
     post:
       tags:
-      - "account"
-      summary: "注册账户"
+      - 'account'
+      summary: '注册账户'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "注册信息"
+      - in: 'body'
+        name: 'body'
+        description: '注册信息'
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: '#/definitions/User'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
   
   /account/login:
     post:
       tags:
-      - "account"
-      summary: "登录"
+      - 'account'
+      summary: '登录'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "登录信息"
+      - in: 'body'
+        name: 'body'
+        description: '登录信息'
         required: true
         schema:
-          $ref: "#/definitions/LoginInfo"
+          $ref: '#/definitions/LoginInfo'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
     
     get:
       tags:
-      - "account"
-      summary: "获取登录状态"
+      - 'account'
+      summary: '获取登录状态'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
   
   /account/logout:
-    get:
+    delete:
       tags:
-      - "account"
-      summary: "登出"
+      - 'account'
+      summary: '登出'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
           
   /account/info:
     get:
       tags:
-      - "account"
-      summary: "获取账户信息"
+      - 'account'
+      summary: '获取账户信息'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnInfo'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
           
-    post:
+    put:
       tags:
-      - "account"
-      summary: "修改账户信息"
+      - 'account'
+      summary: '修改账户全部信息'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "要修改的账户信息"
+      - in: 'body'
+        name: 'body'
+        description: '修改后的账户信息'
         required: true
         schema:
-          $ref: "#/definitions/modifyInfo"
+          $ref: '#/definitions/modifyInfo'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
 
-  /account/info/{username}:
+  /account/info/user/{attr}:
+    put:
+      tags:
+      - 'account'
+      summary: '修改账户某项信息'
+      parameters:
+      - name: 'attr'
+        in: 'path'
+        required: true
+        description: '信息属性'
+        type: 'string'
+        enum:
+        - 'Password'
+        - 'Phone'
+        - 'Email'
+        - 'Nickname'
+        - 'Description'
+      - in: 'body'
+        name: 'body'
+        description: '具体信息'
+        required: true
+        schema:
+          $ref: '#/definitions/attrInfo'
+      consumes:
+      - 'application/json'
+      produces:
+      - 'application/json'
+      responses:
+        200:
+          description: '能够处理的请求'
+          schema:
+            $ref: '#/definitions/returnMessage'
+        404:
+          description: '不能处理的请求'
+
+  /account/info/user/{username}:
     get:
       tags:
-      - "account"
-      summary: "获取账户信息"
+      - 'account'
+      summary: '获取账户信息'
       parameters:
       - name: 'username'
         in: 'path'
@@ -152,183 +187,183 @@ paths:
         description: '账户名'
         type: 'string'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnInfo'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
 
   /account/password:
-    post:
+    PUT:
       tags:
-      - "account"
-      summary: "修改密码"
+      - 'account'
+      summary: '修改密码'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "密码信息"
+      - in: 'body'
+        name: 'body'
+        description: '密码信息'
         required: true
         schema:
-          $ref: "#/definitions/passworldInfo"
+          $ref: '#/definitions/passworldInfo'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
 
   /contact/info:
     get:
       tags:
-      - "contact"
-      summary: "获取好友信息"
+      - 'contact'
+      summary: '获取好友信息'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/contactInfo'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
 
   # /contact/add:
   #   post:
   #     tags:
-  #     - "contact"
-  #     summary: "添加好友"
+  #     - 'contact'
+  #     summary: '添加好友'
   #     parameters:
-  #     - in: "body"
-  #       name: "body"
-  #       description: "好友信息"
+  #     - in: 'body'
+  #       name: 'body'
+  #       description: '好友信息'
   #       required: true
   #       schema:
-  #         $ref: "#/definitions/addInfo"
+  #         $ref: '#/definitions/addInfo'
   #     consumes:
-  #     - "application/json"
+  #     - 'application/json'
   #     produces:
-  #     - "application/json"
+  #     - 'application/json'
   #     responses:
   #       200:
-  #         description: "能够处理的请求"
+  #         description: '能够处理的请求'
   #         schema:
   #           $ref: '#/definitions/returnMessage'
   #       404:
-  #         description: "不能处理的请求"
+  #         description: '不能处理的请求'
           
   /contact/delete:
     post:
       tags:
-      - "contact"
-      summary: "删除好友"
+      - 'contact'
+      summary: '删除好友'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "好友信息"
+      - in: 'body'
+        name: 'body'
+        description: '好友信息'
         required: true
         schema:
-          $ref: "#/definitions/addInfo"
+          $ref: '#/definitions/addInfo'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
   
   /content/text:
     post:
       tags:
-      - "content"
-      summary: "发送文字信息"
+      - 'content'
+      summary: '发送文字信息'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "文字信息"
+      - in: 'body'
+        name: 'body'
+        description: '文字信息'
         required: true
         schema:
-          $ref: "#/definitions/contentInfo"
+          $ref: '#/definitions/contentInfo'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
   
   /content/image:
     post:
       tags:
-      - "content"
-      summary: "发送图片信息"
+      - 'content'
+      summary: '发送图片信息'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "图片信息"
+      - in: 'body'
+        name: 'body'
+        description: '图片信息'
         required: true
         schema:
-          $ref: "#/definitions/contentInfo"
+          $ref: '#/definitions/contentInfo'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
   
   /content/add:
     post:
       tags:
-      - "content"
-      summary: "发送好友请求或是同意好友请求"
+      - 'content'
+      summary: '发送好友请求或是同意好友请求'
       parameters:
-      - in: "body"
-        name: "body"
-        description: "用户信息"
+      - in: 'body'
+        name: 'body'
+        description: '用户信息'
         required: true
         schema:
-          $ref: "#/definitions/contentAddRequest"
+          $ref: '#/definitions/contentAddRequest'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/returnMessage'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
 
   /message/{seq}:
     get:
       tags:
-      - "message"
-      summary: "获取信息"
+      - 'message'
+      summary: '获取信息'
       parameters:
       - name: 'seq'
         in: 'path'
@@ -336,210 +371,216 @@ paths:
         description: '消息seqence'
         type: 'integer'
       consumes:
-      - "application/json"
+      - 'application/json'
       produces:
-      - "application/json"
+      - 'application/json'
       responses:
         200:
-          description: "能够处理的请求"
+          description: '能够处理的请求'
           schema:
             $ref: '#/definitions/messageInfo'
         404:
-          description: "不能处理的请求"
+          description: '不能处理的请求'
   
 definitions:
 
   User:
-    type: "object"
+    type: 'object'
     required:
-    - "Username"
-    - "Password"
+    - 'Username'
+    - 'Password'
     properties:
       UserID:
-        type: "integer"
+        type: 'integer'
       Username:
-        type: "string"
+        type: 'string'
       Password:
-        type: "string"
+        type: 'string'
       Phone:
-        type: "string"
+        type: 'string'
       Email:
-        type: "string"
+        type: 'string'
       Nickname:
-        type: "string"
+        type: 'string'
       Avator:
-        type: "integer"
+        type: 'integer'
       Description:
-        type: "string"
+        type: 'string'
     xml:
-      name: "User"  
+      name: 'User'  
   
   LoginInfo:
-    type: "object"
+    type: 'object'
     required:
-    - "Username"
-    - "Password"
+    - 'Username'
+    - 'Password'
     properties:
       Username:
-        type: "string"
+        type: 'string'
       Password:
-        type: "string"
+        type: 'string'
     xml:
-      name: "LoginInfo"
+      name: 'LoginInfo'
       
   returnMessage:
-    type: "object"
+    type: 'object'
     properties:
       status:
-        type: "string"
+        type: 'string'
         enum:
-        - "ok"
-        - "fail"
+        - 'ok'
+        - 'fail'
       msg:
-        type: "string"
+        type: 'string'
     xml:
-      name: "returnMessage"
+      name: 'returnMessage'
   
   returnInfo:
-    type: "object"
+    type: 'object'
     properties:
       status:
-        type: "string"
+        type: 'string'
         enum:
-        - "ok"
-        - "fail"
+        - 'ok'
+        - 'fail'
       msg:
-        type: "string"
+        type: 'string'
       data:
-        type: "object"
+        type: 'object'
         properties:
           UserID:
-            type: "integer"
+            type: 'integer'
           Username:
-            type: "string"
+            type: 'string'
           Phone:
-            type: "string"
+            type: 'string'
           Email:
-            type: "string"
+            type: 'string'
           Nickname:
-            type: "string"
+            type: 'string'
           Avator:
-            type: "integer"
+            type: 'integer'
           Description:
-            type: "string"
+            type: 'string'
     xml:
-      name: "returnInfo"
+      name: 'returnInfo'
   
   modifyInfo:
-    type: "object"
+    type: 'object'
     properties:
       Phone:
-        type: "string"
+        type: 'string'
       Email:
-        type: "string"
+        type: 'string'
       Nickname:
-        type: "string"
+        type: 'string'
       Avator:
-        type: "integer"
+        type: 'integer'
       Description:
-        type: "string"
+        type: 'string'
     xml:
-      name: "modifyInfo"
+      name: 'modifyInfo'
       
+  attrInfo:
+    type: 'object'
+    properties:
+      value:
+        type: 'string'
+
   passworldInfo:
-    type: "object"
+    type: 'object'
     properties:
       old_password:
-        type: "string"
+        type: 'string'
       new_password:
-        type: "string"
+        type: 'string'
     xml:
-      name: "passworldInfo"
+      name: 'passworldInfo'
   
   contactInfo:
-    type: "object"
+    type: 'object'
     properties:
       status:
-        type: "string"
+        type: 'string'
         enum:
-        - "ok"
-        - "fail"
+        - 'ok'
+        - 'fail'
       msg:
-        type: "string"
+        type: 'string'
       data:
-        type: "array"
+        type: 'array'
         items:
-          type: "object"
+          type: 'object'
           properties:
             Username:
-              type: "string"
+              type: 'string'
             Friend:
-              type: "string"
+              type: 'string'
     xml:
-      name: "contactInfo"
+      name: 'contactInfo'
   
   addInfo:
-    type: "object"
+    type: 'object'
     properties:
       username:
-        type: "string"
+        type: 'string'
     xml:
-      name: "addInfo"
+      name: 'addInfo'
   
   contentInfo:
-    type: "object"
+    type: 'object'
     properties:
       data:
-        type: "string"
+        type: 'string'
       to:
-        type: "string"
+        type: 'string'
     xml:
-      name: "contentInfo"
+      name: 'contentInfo'
 
   contentAddRequest:
-    type: "object"
+    type: 'object'
     properties:
       cid:
-        type: "integer"
+        type: 'integer'
       to:
-        type: "string"
+        type: 'string'
       info:
-        type: "string"
+        type: 'string'
     xml:
-      name: "contentAddRequest"
+      name: 'contentAddRequest'
       
   messageInfo:
-    type: "object"
+    type: 'object'
     properties:
       status:
-        type: "string"
+        type: 'string'
         enum:
-        - "ok"
-        - "fail"
+        - 'ok'
+        - 'fail'
       msg:
-        type: "string"
+        type: 'string'
       data:
-        type: "array"
+        type: 'array'
         items:
-          type: "object"
+          type: 'object'
           properties:
             Username:
-              type: "string"
+              type: 'string'
             Seq:
-              type: "integer"
+              type: 'integer'
             From:
-              type: "string"
+              type: 'string'
             Type:
-              type: "string"
+              type: 'string'
             ContentID:
-              type: "integer"
+              type: 'integer'
             content:
-              type: "string"
+              type: 'string'
             timestamp:
-              type: "string"
+              type: 'string'
     xml:
-      name: "messageInfo"
+      name: 'messageInfo'
   
 externalDocs:
-  description: "api.yaml"
-  url: "http://swagger.io"
+  description: 'api.yaml'
+  url: 'http://swagger.io'
