@@ -46,7 +46,7 @@ def register(request):
 
 def logout(request):
     response = {'state':'fail', 'msg':'no msg'}
-    # 只允许通过GET方法退出登录
+    # 只允许通过 DELETE 方法退出登录
     if request.method != 'DELETE':
         response['msg'] = 'wrong method'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
@@ -109,16 +109,16 @@ def info(request):
     # 已经登录, 所以拿取用户信息
     t_username = request.session['login_id']
 
-    if request.method == 'POST':
+    if request.method == 'PUT':
         # 获取参数
         try:
-            t_phone = request.POST['phone']
-            t_email = request.POST['email']
-            t_nickname = request.POST['nickname']
-            t_avator = request.POST['avator']
-            t_description = request.POST['description']
+            t_phone = request.PUT['phone']
+            t_email = request.PUT['email']
+            t_nickname = request.PUT['nickname']
+            t_avator = request.PUT['avator']
+            t_description = request.PUT['description']
         except Exception as e:
-            response['msg'] = 'POST parameter error'
+            response['msg'] = 'PUT parameter error'
             return HttpResponse(json.dumps(response), content_type = 'application/json')
 
         # 数据库操作
@@ -133,7 +133,6 @@ def info(request):
                 t_user.Phone = t_phone
                 t_user.Email = t_email
                 t_user.Nickname = t_nickname
-                t_user.Avator = t_avator
                 t_user.Desrciption = t_description
                 t_user.save()
                 response['state'] = 'ok'

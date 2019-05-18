@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     '118.89.65.154',
     '127.0.0.1',
     '172.18.32.97',
+    '172.19.39.66',
 ]
 
 
@@ -126,9 +127,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, "static").replace('\\', '/')
+
 STATIC_URL = '/static/'
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')     
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 
-MEDIA_URL = '/media/'                                                
+MEDIA_URL = '/media/'

@@ -9,7 +9,7 @@ class User(models.Model):
     Phone = models.CharField(max_length = 15)
     Email = models.CharField(max_length = 30)
     Nickname = models.CharField(max_length = 20)
-    Avator = models.IntegerField(default = -1)
+    Avator = models.CharField(max_length = 100)
     Description = models.CharField(max_length = 40)
 
     def __str__(self):
