@@ -140,6 +140,29 @@ paths:
         404:
           description: '不能处理的请求'
 
+  /account/info/avatar:
+    post:
+      tags:
+      - 'account'
+      summary: '修改账户头像'
+      parameters:
+      - in: 'formData'
+        name: 'file'
+        type: 'file'
+        description: '头像'
+        required: true
+      consumes:
+      - 'multipart/form-data'
+      produces:
+      - 'application/json'
+      responses:
+        200:
+          description: '能够处理的请求'
+          schema:
+            $ref: '#/definitions/returnMessage'
+        404:
+          description: '不能处理的请求'
+
   /account/info/{attr}:
     put:
       tags:
@@ -402,7 +425,7 @@ definitions:
         type: 'string'
       Nickname:
         type: 'string'
-      Avator:
+      Avatar:
         type: 'integer'
       Description:
         type: 'string'
@@ -458,7 +481,7 @@ definitions:
             type: 'string'
           Nickname:
             type: 'string'
-          Avator:
+          Avatar:
             type: 'integer'
           Description:
             type: 'string'
@@ -474,7 +497,7 @@ definitions:
         type: 'string'
       Nickname:
         type: 'string'
-      Avator:
+      Avatar:
         type: 'integer'
       Description:
         type: 'string'

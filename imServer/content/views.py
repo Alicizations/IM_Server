@@ -202,8 +202,8 @@ def image_detail(request, image_id):
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
-def jsonMSG(state = 'fail', msg = 'no msg'):
-    response = {'state':state, 'msg':msg, 'data':[]}
+def jsonMSG(state = 'fail', msg = 'no msg', data = []):
+    response = {'state':state, 'msg':msg, 'data':data}
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
 def checkRelationship(user_now, user_target):

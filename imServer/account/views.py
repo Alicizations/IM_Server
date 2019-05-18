@@ -4,8 +4,12 @@ from django.http import HttpResponse
 import json
 from .models import User
 from content.views import jsonMSG
+from django import forms
 
 # Create your views here.
+
+class AvatarForm(forms.Form):
+    avatar = forms.ImageField(required=True)
 
 def register(request):
     response = {'state':'fail', 'msg':'no msg'}
@@ -97,6 +101,40 @@ def login(request):
 
     return HttpResponse(json.dumps(response), content_type = 'application/json')
 
+def uploadAvatar(request):
+
+    if request.method == 'GET':
+        t_user = User.objects.filter(Username = '123')
+        t_user = t_user[0]
+        return jsonMSG(msg = 'upload successfully', data = t_user.Avatar.url)
+    
+    # 要在登录状态下
+    if 'login_id' not in request.session:
+        return jsonMSG(msg = 'no login')
+
+    if request.method != 'POST':
+        return jsonMSG(msg = 'wrong method')
+
+    # 已经登录, 所以拿取用户信息
+    t_username = request.session['login_id']
+
+    avatarForm = AvatarForm(request.POST, request.FILES)
+    if avatarForm.is_valid():
+        print(request.FILES)
+        
+        try:
+            t_user = User.objects.filter(Username = t_username)
+        except Exception as e:
+            return jsonMSG(msg = 'db error')
+        else:
+            if t_user.count() <= 0:
+                return jsonMSG(msg = 'no such user')
+            else:
+                t_user = t_user[0]
+                t_user.Avatar = request.FILES['file']
+                t_user.save()
+                return jsonMSG(state = 'ok', msg = t_user.Avatar.url)
+    return jsonMSG(msg = 'invalid form')
 
 def info(request):
     response = {'state':'fail', 'msg':'no msg'}
@@ -115,7 +153,7 @@ def info(request):
             t_phone = request.PUT['phone']
             t_email = request.PUT['email']
             t_nickname = request.PUT['nickname']
-            t_avator = request.PUT['avator']
+            t_avatar = request.PUT['avatar']
             t_description = request.PUT['description']
         except Exception as e:
             response['msg'] = 'PUT parameter error'
@@ -267,8 +305,8 @@ def changeInfo(request, t_attr):
             elif t_attr == 'Description':
                 t_user.Description = t_value
                 t_user.save()
-            elif t_attr == 'Avator':
-                t_user.Avator = t_value
+            elif t_attr == 'Avatar':
+                t_user.Avatar = t_value
                 t_user.save()
             
 
