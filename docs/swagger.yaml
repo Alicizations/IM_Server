@@ -140,7 +140,7 @@ paths:
         404:
           description: '不能处理的请求'
 
-  /account/info/user/{attr}:
+  /account/info/{attr}:
     put:
       tags:
       - 'account'
