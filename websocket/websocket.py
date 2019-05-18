@@ -64,8 +64,8 @@ async def handle(websocket, path):
         
         
 
-# start_server = websockets.serve(handle, '10.104.198.199', 6789)
+start_server = websockets.serve(handle, '10.104.198.199', 6789)
 # start_server = websockets.serve(handle, '172.18.32.97', 6789)
-start_server = websockets.serve(handle, '172.19.39.66', 6789)
+# start_server = websockets.serve(handle, '172.19.39.66', 6789)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
