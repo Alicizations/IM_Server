@@ -251,6 +251,7 @@ def add(request):
     try:
         to_username = request.POST['to']
         to_cid = request.POST['cid']
+        to_cid = int(to_cid)
         t_info = request.POST['info']
     except Exception as e:
         return jsonMSG(msg = 'POST parameter error')
@@ -341,6 +342,7 @@ def add(request):
                         return jsonMSG(msg = 'db or websocket error when add contact')
                     else:
                         return jsonMSG(state = 'ok', msg = 'add contact successfully')
+    return jsonMSG(msg = 'some thing wrong')
 
 
 def checkSeqByUsername(username):

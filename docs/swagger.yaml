@@ -598,9 +598,14 @@ definitions:
             ContentID:
               type: 'integer'
             content:
-              type: 'string'
-            timestamp:
-              type: 'string'
+              type: 'object'
+              properties:
+                Cid:
+                  type: 'string'
+                Cstr/Cimage:
+                  type: 'string'
+                Timestamp:
+                  type: 'string'
     xml:
       name: 'messageInfo'
   
