@@ -4,12 +4,7 @@ from django.http import HttpResponse
 import json
 from .models import User
 from content.views import jsonMSG
-from django import forms
 
-# Create your views here.
-
-class AvatarForm(forms.Form):
-    avatar = forms.ImageField(required=True)
 
 def register(request):
     response = {'state':'fail', 'msg':'no msg'}
@@ -109,31 +104,29 @@ def uploadAvatar(request):
         return jsonMSG(msg = 'upload successfully', data = t_user.Avatar.url)
     
     # 要在登录状态下
-    if 'login_id' not in request.session:
-        return jsonMSG(msg = 'no login')
+    # if 'login_id' not in request.session:
+    #     return jsonMSG(msg = 'no login')
 
-    if request.method != 'POST':
-        return jsonMSG(msg = 'wrong method')
+    # if request.method != 'POST':
+    #     return jsonMSG(msg = 'wrong method')
 
-    # 已经登录, 所以拿取用户信息
-    t_username = request.session['login_id']
+    # # 已经登录, 所以拿取用户信息
+    # t_username = request.session['login_id']
+    t_username = '123'
 
-    avatarForm = AvatarForm(request.POST, request.FILES)
-    if avatarForm.is_valid():
-        print(request.FILES)
-        
-        try:
-            t_user = User.objects.filter(Username = t_username)
-        except Exception as e:
-            return jsonMSG(msg = 'db error')
+    print(request.FILES)
+    try:
+        t_user = User.objects.filter(Username = t_username)
+    except Exception as e:
+        return jsonMSG(msg = 'db error')
+    else:
+        if t_user.count() <= 0:
+            return jsonMSG(msg = 'no such user')
         else:
-            if t_user.count() <= 0:
-                return jsonMSG(msg = 'no such user')
-            else:
-                t_user = t_user[0]
-                t_user.Avatar = request.FILES['file']
-                t_user.save()
-                return jsonMSG(state = 'ok', msg = t_user.Avatar.url)
+            t_user = t_user[0]
+            t_user.Avatar = request.FILES['file']
+            t_user.save()
+            return jsonMSG(state = 'ok', msg = t_user.Avatar.url)
     return jsonMSG(msg = 'invalid form')
 
 def info(request):
