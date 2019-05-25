@@ -223,8 +223,8 @@ def checkRelationship(user_now, user_target):
     return False
 
 def tellUserReceiveMessage(username):
-    # ws = create_connection('ws://118.89.65.154:6789')
-    ws = create_connection('ws://172.18.32.97:6789')
+    ws = create_connection('ws://118.89.65.154:6789')
+    # ws = create_connection('ws://172.18.32.97:6789')
 
     msg = {'action': 'new', 'data': username}
     print('Sending msg to User ' + username)

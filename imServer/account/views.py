@@ -2,8 +2,11 @@
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 import json
+from django.conf import settings
 from .models import User
 from content.views import jsonMSG
+import os
+from django.http import QueryDict
 
 
 def register(request):
@@ -124,10 +127,24 @@ def uploadAvatar(request):
             return jsonMSG(msg = 'no such user')
         else:
             t_user = t_user[0]
+            removeOldAvatar(t_user.Avatar.url)
             t_user.Avatar = request.FILES['file']
             t_user.save()
             return jsonMSG(state = 'ok', msg = t_user.Avatar.url)
     return jsonMSG(msg = 'invalid form')
+
+def removeOldAvatar(url):
+    if url == '/media/avatar/default.png':
+        return
+
+    filePath = os.path.join(settings.BASE_DIR, url).replace('\\', '/')
+    print(filePath)
+
+    try:
+        os.remove(filePath)
+    except Exception as e:
+        print('remove file error:')
+        print(e)
 
 def info(request):
     response = {'state':'fail', 'msg':'no msg'}
@@ -187,6 +204,12 @@ def info(request):
     else:
         if t_user.count() == 1:
             temp = model_to_dict(t_user[0])
+            try:
+                del temp['UserID']
+                del temp['Password']
+            except Exception as e:
+                print('del attr error')
+                return jsonMSG(msg = 'del attr error')
             response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
             response['msg'] = 'no data'
@@ -208,6 +231,12 @@ def othersInfo(request, t_username):
     else:
         if t_user.count() == 1:
             temp = model_to_dict(t_user[0])
+            try:
+                del temp['UserID']
+                del temp['Password']
+            except Exception as e:
+                print('del attr error')
+                return jsonMSG(msg = 'del attr error')
             response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
             response['msg'] = 'no data'
@@ -267,9 +296,14 @@ def changeInfo(request, t_attr):
     # 已经登录, 所以拿取用户信息
     t_username = request.session['login_id']
 
+    # print(request.body)
+
+    put = QueryDict(request.body)
+
     # 获取参数
     try:
-        t_value = request.PUT['value']
+        # t_value = request.PUT['value']
+        t_value = put.get('value')
     except Exception as e:
         return jsonMSG(msg = 'PUT parameter error')
 
@@ -286,20 +320,17 @@ def changeInfo(request, t_attr):
             if t_attr == 'Password':
                 t_user.Password = t_value
                 t_user.save()
-            elif t_attr == 'Phone':
-                t_user.Phone = t_value
+            elif t_attr == 'Gender':
+                t_user.Gender = t_value
                 t_user.save()
-            elif t_attr == 'Email':
-                t_user.Email = t_value
+            elif t_attr == 'Region':
+                t_user.Region = t_value
                 t_user.save()
             elif t_attr == 'Nickname':
                 t_user.Nickname = t_value
                 t_user.save()
             elif t_attr == 'Description':
                 t_user.Description = t_value
-                t_user.save()
-            elif t_attr == 'Avatar':
-                t_user.Avatar = t_value
                 t_user.save()
             
 

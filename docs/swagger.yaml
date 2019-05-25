@@ -117,28 +117,28 @@ paths:
         404:
           description: '不能处理的请求'
           
-    put:
-      tags:
-      - 'account'
-      summary: '修改账户全部信息'
-      parameters:
-      - in: 'body'
-        name: 'body'
-        description: '修改后的账户信息'
-        required: true
-        schema:
-          $ref: '#/definitions/modifyInfo'
-      consumes:
-      - 'application/json'
-      produces:
-      - 'application/json'
-      responses:
-        200:
-          description: '能够处理的请求'
-          schema:
-            $ref: '#/definitions/returnMessage'
-        404:
-          description: '不能处理的请求'
+    # put:
+    #   tags:
+    #   - 'account'
+    #   summary: '修改账户全部信息'
+    #   parameters:
+    #   - in: 'body'
+    #     name: 'body'
+    #     description: '修改后的账户信息'
+    #     required: true
+    #     schema:
+    #       $ref: '#/definitions/modifyInfo'
+    #   consumes:
+    #   - 'application/json'
+    #   produces:
+    #   - 'application/json'
+    #   responses:
+    #     200:
+    #       description: '能够处理的请求'
+    #       schema:
+    #         $ref: '#/definitions/returnMessage'
+    #     404:
+    #       description: '不能处理的请求'
 
   /account/info/avatar:
     post:
@@ -176,8 +176,8 @@ paths:
         type: 'string'
         enum:
         - 'Password'
-        - 'Phone'
-        - 'Email'
+        - 'Gender'
+        - 'Region'
         - 'Nickname'
         - 'Description'
       - in: 'body'
@@ -471,18 +471,22 @@ definitions:
       data:
         type: 'object'
         properties:
-          UserID:
-            type: 'integer'
+          # UserID:
+          #   type: 'integer'
           Username:
             type: 'string'
-          Phone:
+          # Phone:
+          #   type: 'string'
+          # Email:
+          #   type: 'string'
+          Gender:
             type: 'string'
-          Email:
+          Region:
             type: 'string'
           Nickname:
             type: 'string'
           Avatar:
-            type: 'integer'
+            type: 'string'
           Description:
             type: 'string'
     xml:
