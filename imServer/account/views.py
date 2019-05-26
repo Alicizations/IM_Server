@@ -101,21 +101,21 @@ def login(request):
 
 def uploadAvatar(request):
 
-    if request.method == 'GET':
-        t_user = User.objects.filter(Username = '123')
-        t_user = t_user[0]
-        return jsonMSG(msg = 'upload successfully', data = t_user.Avatar.url)
+    # if request.method == 'GET':
+    #     t_user = User.objects.filter(Username = '123')
+    #     t_user = t_user[0]
+    #     return jsonMSG(msg = 'upload successfully', data = t_user.Avatar.url)
     
     # 要在登录状态下
-    # if 'login_id' not in request.session:
-    #     return jsonMSG(msg = 'no login')
+    if 'login_id' not in request.session:
+        return jsonMSG(msg = 'no login')
 
-    # if request.method != 'POST':
-    #     return jsonMSG(msg = 'wrong method')
+    if request.method != 'POST':
+        return jsonMSG(msg = 'wrong method')
 
-    # # 已经登录, 所以拿取用户信息
-    # t_username = request.session['login_id']
-    t_username = '123'
+    # 已经登录, 所以拿取用户信息
+    t_username = request.session['login_id']
+    # t_username = '123'
 
     print(request.FILES)
     try:
@@ -134,10 +134,14 @@ def uploadAvatar(request):
     return jsonMSG(msg = 'invalid form')
 
 def removeOldAvatar(url):
+
+    print(url)
+
     if url == '/media/avatar/default.png':
         return
 
-    filePath = os.path.join(settings.BASE_DIR, url).replace('\\', '/')
+    # filePath = os.path.join(settings.BASE_DIR, url).replace('\\', '/')
+    filePath = settings.BASE_DIR.replace('\\', '/') + url
     print(filePath)
 
     try:
@@ -181,7 +185,7 @@ def info(request):
                 t_user.Phone = t_phone
                 t_user.Email = t_email
                 t_user.Nickname = t_nickname
-                t_user.Desrciption = t_description
+                t_user.Description = t_description
                 t_user.save()
                 response['state'] = 'ok'
                 response['msg'] = 'change successfully'
@@ -203,13 +207,16 @@ def info(request):
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
         if t_user.count() == 1:
-            temp = model_to_dict(t_user[0])
-            try:
-                del temp['UserID']
-                del temp['Password']
-            except Exception as e:
-                print('del attr error')
-                return jsonMSG(msg = 'del attr error')
+            # temp = model_to_dict(t_user[0])
+            t_user = t_user[0]
+            temp = {}
+            temp['Username'] = t_user.Username
+            temp['Gender'] = t_user.Gender
+            temp['Region'] = t_user.Region
+            temp['Nickname'] = t_user.Nickname
+            temp['Avatar'] = t_user.Avatar.url
+            temp['Description'] = t_user.Description
+            
             response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
             response['msg'] = 'no data'
@@ -230,13 +237,14 @@ def othersInfo(request, t_username):
         return HttpResponse(json.dumps(response), content_type = 'application/json')
     else:
         if t_user.count() == 1:
-            temp = model_to_dict(t_user[0])
-            try:
-                del temp['UserID']
-                del temp['Password']
-            except Exception as e:
-                print('del attr error')
-                return jsonMSG(msg = 'del attr error')
+            t_user = t_user[0]
+            temp = {}
+            temp['Username'] = t_user.Username
+            temp['Gender'] = t_user.Gender
+            temp['Region'] = t_user.Region
+            temp['Nickname'] = t_user.Nickname
+            temp['Avatar'] = t_user.Avatar.url
+            temp['Description'] = t_user.Description
             response = {'state':'ok', 'msg':'ok', "data":temp}
         else:
             response['msg'] = 'no data'

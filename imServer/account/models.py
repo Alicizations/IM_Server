@@ -11,7 +11,7 @@ class User(models.Model):
     Region = models.CharField(max_length = 20)
     Nickname = models.CharField(max_length = 20)
     # Avatar = models.CharField(max_length = 100)
-    Avatar = models.ImageField(upload_to = 'avatar', storage = ImageStorage(), default = 'avatar/default.jpg') 
+    Avatar = models.ImageField(upload_to = 'avatar', storage = ImageStorage(), default = 'avatar/default.png') 
     Description = models.CharField(max_length = 40)
 
     def __str__(self):
