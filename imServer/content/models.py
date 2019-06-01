@@ -1,5 +1,5 @@
 from django.db import models
-
+from system.storage import ImageStorage
 # Create your models here.
 
 class Content_Text(models.Model):

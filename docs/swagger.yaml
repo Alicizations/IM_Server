@@ -340,14 +340,19 @@ paths:
       - 'content'
       summary: '发送图片信息'
       parameters:
+      - in: 'formData'
+        name: 'file'
+        type: 'file'
+        description: '图片文件'
+        required: true
       - in: 'body'
         name: 'body'
-        description: '图片信息'
+        description: '其他信息'
         required: true
         schema:
           $ref: '#/definitions/contentInfo'
-      consumes:
-      - 'application/json'
+      # consumes:
+      # - 'application/json'
       produces:
       - 'application/json'
       responses:
@@ -557,7 +562,7 @@ definitions:
   contentInfo:
     type: 'object'
     properties:
-      data:
+      timestamp:
         type: 'string'
       to:
         type: 'string'

@@ -94,7 +94,7 @@ def image(request):
 
     # 获取参数
     try:
-        t_data = request.POST['data']
+        t_data = request.FILES['file']
         to_username = request.POST['to']
         t_timestamp = request.POST['timestamp']
     except Exception as e:
@@ -105,7 +105,7 @@ def image(request):
         return jsonMSG(msg = 'you are not friends!')
 
     # 为消息设定一个id, 这里使用的是消息表的长度+1
-    cid = len(Content_Image.objects.all()) + 1
+    # cid = len(Content_Image.objects.all()) + 1
 
     seq = checkSeqByUsername(to_username)
     # seq 错误处理
@@ -114,9 +114,8 @@ def image(request):
 
     # 数据库操作,插入图片
     try:
-        Content_Image.objects.create(
-            Cid = cid,
-            Cimage = "img/"+ t_data.name,
+        t_img = Content_Image.objects.create(
+            Cimage = t_data,
             Timestamp = t_timestamp
         )
         Msg.objects.create(
@@ -124,17 +123,18 @@ def image(request):
             Seq = seq,
             From = from_username,
             Type = 'image',
-            ContentID = cid
+            ContentID = t_img.Cid
         )
         
         # 保存文件
-        fname = settings.MEDIA_ROOT + "/img/" + f1.name
-        with open(fname,'wb') as pic:
-            for c in f1.chunks():
-                pic.write(c)
+        # fname = settings.MEDIA_ROOT + "/img/" + f1.name
+        # with open(fname,'wb') as pic:
+        #     for c in f1.chunks():
+        #         pic.write(c)
 
         response['state'] = 'ok'
         response['msg'] = 'send successfully'
+        response['data'] = t_img.Cimage.url
 
         # 用websocket即时告知用户有新消息
         tellUserReceiveMessage(to_username)
