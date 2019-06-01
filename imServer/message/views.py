@@ -84,7 +84,13 @@ def getContentAndTimeByTypeAndCid(msg_type, msg_cid):
         except Exception as e:
             return ''
         else:
-            return model_to_dict(t_content[0])
+            t_c = t_content[0]
+            temp = {}
+            temp['Cid'] = t_c.Cid
+            temp['Cstr'] = t_c.Info
+            temp['Timestamp'] = t_c.Timestamp
+            # return model_to_dict(t_content[0])
+            return temp
 
     else:
         return ''
