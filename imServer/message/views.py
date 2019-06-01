@@ -5,6 +5,8 @@ from .models import Msg
 from content.models import Content_Text
 from content.models import Content_Image
 from content.models import Content_AddMsg
+from content.views import jsonMSG
+from account.views import getUser
 
 def messageTable(request, seq):
     response = {'state':'fail', 'msg':'no msg'}
@@ -76,7 +78,13 @@ def getContentAndTimeByTypeAndCid(msg_type, msg_cid):
             if t_content.count() <= 0:
                 return ''
             else:
-                return model_to_dict(t_content[0])
+                t_c = t_content[0]
+                temp = {}
+                temp['Cid'] = t_c.Cid
+                temp['Cstr'] = t_c.Cimage.url
+                temp['Timestamp'] = t_c.Timestamp
+                # return model_to_dict(t_content[0])
+                return temp
 
     elif msg_type == 'addRequest':
         try:
@@ -94,3 +102,39 @@ def getContentAndTimeByTypeAndCid(msg_type, msg_cid):
 
     else:
         return ''
+
+def seq(request):
+    # 要在登录状态下
+    if 'login_id' not in request.session:
+        return jsonMSG(msg = 'no login')
+
+    # 已经登录, 所以拿取用户信息
+    t_username = request.session['login_id']
+
+    # GET 方法
+    # 获取保存在数据库的 seq
+    if request.method == 'GET':
+        t_user, err = getUser(t_username)
+        if err:
+            return jsonMSG(msg = err)
+
+        return jsonMSG(state = 'ok', msg = 'get', data = t_user.seq.all()[0].Seq)
+
+    # POST 方法
+    # 更新数据库的 seq
+    if request.method == 'POST':
+        t_user, err = getUser(t_username)
+        if err:
+            return jsonMSG(msg = err)
+
+        try:
+            t_seq = request.POST['seq']
+            t_s = t_user.seq.all()[0]
+            t_s.Seq = t_seq
+            t_s.save()
+        except Exception as e:
+            return jsonMSG(msg = 'modify fail')
+
+        return jsonMSG(state = 'ok', msg = 'succeed')
+
+    return jsonMSG(msg = 'wrong method')

@@ -409,6 +409,46 @@ paths:
             $ref: '#/definitions/messageInfo'
         404:
           description: '不能处理的请求'
+
+  /message/seq:
+    get:
+      tags:
+      - 'message'
+      summary: '获取seq信息'
+      consumes:
+      - 'application/json'
+      produces:
+      - 'application/json'
+      responses:
+        200:
+          description: '能够处理的请求'
+          schema:
+            $ref: '#/definitions/SeqResponse'
+        404:
+          description: '不能处理的请求'
+
+    post:
+      tags:
+      - 'message'
+      summary: '更新seq信息'
+      consumes:
+      - 'application/json'
+      produces:
+      - 'application/json'
+      parameters:
+      - in: 'body'
+        name: 'body'
+        description: 'seq信息'
+        required: true
+        schema:
+          $ref: '#/definitions/SeqRequest'
+      responses:
+        200:
+          description: '能够处理的请求'
+          schema:
+            $ref: '#/definitions/returnMessage'
+        404:
+          description: '不能处理的请求'
   
 definitions:
 
@@ -617,6 +657,25 @@ definitions:
                   type: 'string'
     xml:
       name: 'messageInfo'
+
+  SeqResponse:
+    type: 'object'
+    properties:
+      status:
+        type: 'string'
+        enum:
+        - 'ok'
+        - 'fail'
+      msg:
+        type: 'string'
+      data:
+        type: 'integer'
+
+  SeqRequest:
+    type: 'object'
+    properties:
+      seq:
+        type: 'integer'
   
 externalDocs:
   description: 'api.yaml'

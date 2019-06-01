@@ -1,4 +1,5 @@
 from django.db import models
+from account.models import *
 
 # Create your models here.
 
@@ -11,3 +12,7 @@ class Msg(models.Model):
 
     def __str__(self):
         return self.Username
+
+class UserSeq(models.Model):
+    User = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'seq')
+    Seq = models.IntegerField(default = 0)

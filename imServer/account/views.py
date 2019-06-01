@@ -7,6 +7,7 @@ from .models import User
 from content.views import jsonMSG
 import os
 from django.http import QueryDict
+from message.models import UserSeq
 
 
 def register(request):
@@ -35,9 +36,12 @@ def register(request):
         response['msg'] = 'db error'
     else:
         if t_user.count() == 0:
-            User.objects.create(
+            temp = User.objects.create(
                 Username = t_username,
                 Password = t_password
+            )
+            UserSeq.objects.create(
+                User = temp
             )
             response['state'] = 'ok'
             response['msg'] = 'register successfully'
@@ -343,3 +347,20 @@ def changeInfo(request, t_attr):
             
 
     return jsonMSG(state = 'ok', msg = 'change successfully')
+
+def getUser(t_username):
+    
+    if type(t_username) != type('1'):
+        return None, 'type error'
+
+    # 查询用户
+    try:
+        t_user = User.objects.filter(Username = t_username)
+    except Exception as e:
+        return None, 'db error when get user'
+    else:
+        if t_user.count() == 1:
+            return t_user[0], None 
+        return None, 'no such user'
+
+    return None, 'fail'
