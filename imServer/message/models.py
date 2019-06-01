@@ -16,3 +16,6 @@ class Msg(models.Model):
 class UserSeq(models.Model):
     User = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'seq')
     Seq = models.IntegerField(default = 0)
+
+    def __str___(self):
+        return '%s: %d' % (self.User.Username, self.Seq)
