@@ -25,4 +25,4 @@ urlpatterns = [
     path('content/', include('content.urls')),
     # path('history', include('history.urls')),
     path('admin/', admin.site.urls),
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)  # 加上statis
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT) # 加上statis
