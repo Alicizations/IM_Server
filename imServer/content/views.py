@@ -279,7 +279,7 @@ def add(request):
             # seq 错误处理
             if seq == -1:
                 return jsonMSG(msg = 'get seq fail')
-            Content_AddMsg.objects.create(
+            t_addmsg = Content_AddMsg.objects.create(
                 From = from_username,
                 To = to_username,
                 Info = t_info,
@@ -290,7 +290,7 @@ def add(request):
                 Seq = seq,
                 From = from_username,
                 Type = 'addRequest',
-                ContentID = to_cid
+                ContentID = t_addmsg.Cid
             )
         except Exception as e:
             return jsonMSG(msg = 'db error when add request')
