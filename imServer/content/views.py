@@ -34,6 +34,7 @@ def text(request):
     try:
         t_data = request.POST['data']
         to_username = request.POST['to']
+        t_timestamp = request.POST['timestamp']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
@@ -55,7 +56,7 @@ def text(request):
         Content_Text.objects.create(
             Cid = cid,
             Cstr = t_data,
-            Timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            Timestamp = t_timestamp
         )
         Msg.objects.create(
             Username = to_username,
@@ -95,6 +96,7 @@ def image(request):
     try:
         t_data = request.POST['data']
         to_username = request.POST['to']
+        t_timestamp = request.POST['timestamp']
     except Exception as e:
         response['msg'] = 'POST parameter error'
         return HttpResponse(json.dumps(response), content_type = 'application/json')
@@ -115,7 +117,7 @@ def image(request):
         Content_Image.objects.create(
             Cid = cid,
             Cimage = "img/"+ t_data.name,
-            Timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            Timestamp = t_timestamp
         )
         Msg.objects.create(
             Username = to_username,
@@ -288,7 +290,7 @@ def add(request):
                 Seq = seq,
                 From = from_username,
                 Type = 'addRequest',
-                ContentID = cid
+                ContentID = to_cid
             )
         except Exception as e:
             return jsonMSG(msg = 'db error when add request')
