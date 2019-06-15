@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Alicizations/IM_Server.svg?branch=master)](https://travis-ci.org/Alicizations/IM_Server)
+
 # IM_Server
 server of iOS project IM
 
