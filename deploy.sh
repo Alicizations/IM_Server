@@ -1,8 +1,4 @@
 echo ---------------------------------------------
-echo                login Server
-echo ---------------------------------------------
-ssh -i id_rsa root@118.89.65.154 << eeooff
-echo ---------------------------------------------
 echo                 stop uwsgi3
 echo ---------------------------------------------
 cd /root/IM_Server/uwsgi_django_config
@@ -16,8 +12,4 @@ echo ---------------------------------------------
 echo                start uwsgi3
 echo ---------------------------------------------
 cd /root/IM_Server/uwsgi_django_config
-uwsgi3 --ini s_uwsgi.ini
-eeooff
-echo ---------------------------------------------
-echo                logout server
-echo ---------------------------------------------
+uwsgi3 --ini d_uwsgi.ini
