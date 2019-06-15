@@ -3,6 +3,7 @@ imServer/contact/migrations/0001_initial.py
 imServer/content/migrations/0001_initial.py
 imServer/message/migrations/0001_initial.py
 imServer/media/
+imServer/media/img/
 imServer/static/
 
 # Byte-compiled / optimized / DLL files

@@ -92,6 +92,8 @@ def image(request):
     # 已经登录, 所以拿取用户信息
     from_username = request.session['login_id']
 
+    print(request)
+
     # 获取参数
     try:
         t_data = request.FILES['file']

@@ -13,7 +13,7 @@ class Content_Text(models.Model):
 class Content_Image(models.Model):
     Cid = models.AutoField(primary_key = True)
     # 这里的upload_to是指定图片存储的文件夹名称，上传文件之后会自动创建
-    Cimage = models.ImageField(upload_to='img')
+    Cimage = models.ImageField(upload_to='img', storage = ImageStorage())
     Timestamp = models.CharField(max_length = 20)
 
     def __str__(self):
@@ -28,4 +28,4 @@ class Content_AddMsg(models.Model):
     Timestamp = models.CharField(max_length = 20)
 
     def __str__(self):
-        return self.From + ' -> ' + self.To
+        return '%d: %s -> %s' % (self.Cid, self.From, self.To)
