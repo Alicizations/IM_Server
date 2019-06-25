@@ -338,7 +338,7 @@ def add(request):
                             Username = from_username,
                             Seq = seq,
                             From = to_username,
-                            Type = 'addComfirm',
+                            Type = 'addConfirm',
                             ContentID = 0
                         )
                         tellUserReceiveMessage(from_username)
@@ -362,3 +362,26 @@ def checkSeqByUsername(username):
             seq = t_msg.count() + 1
 
     return seq
+
+def deleteContact(request, t_user):
+    # 要在登录状态下
+    if 'login_id' not in request.session:
+        return jsonMSG(msg = 'no login')
+
+    # 只允许POST方法
+    if request.method != 'DELETE':
+        return jsonMSG(msg = 'wrong method')
+
+    # 已经登录, 所以拿取用户信息
+    this_username = request.session['login_id']
+
+    # 数据库操作, 删除双方好友
+    try:
+        r_contact = Contact.objects.filter(Username = this_username, Friend = t_user)
+        if r_contact.count() > 0:
+            r_contact.delete()
+    except Exception as e:
+        print(e)
+        return jsonMSG(msg = 'db error when delete contact')
+    
+    return jsonMSG(state = 'ok')
