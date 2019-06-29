@@ -318,7 +318,7 @@ def add(request):
                 # 请求符合, 添加为好友
                 else:
                     try:
-                        seq = checkSeqByUsername(from_username)
+                        seq = checkSeqByUsername(to_username)
                         # seq 错误处理
                         if seq == -1:
                             return jsonMSG(msg = 'get seq fail')
@@ -335,13 +335,13 @@ def add(request):
                                 Friend = from_username
                             )
                         Msg.objects.create(
-                            Username = from_username,
+                            Username = to_username,
                             Seq = seq,
-                            From = to_username,
+                            From = from_username,
                             Type = 'addConfirm',
                             ContentID = 0
                         )
-                        tellUserReceiveMessage(from_username)
+                        tellUserReceiveMessage(to_username)
                     except Exception as e:
                         return jsonMSG(msg = 'db or websocket error when add contact')
                     else:
